@@ -1,6 +1,6 @@
 #pragma once
 #include <functional>
-#include <list>
+#include <queue>
 template <class K, class I>
 class AVLTree {
 private:
@@ -24,6 +24,10 @@ private:
 	node* rotateRight(node* x);
 public:
 	AVLTree();
+	AVLTree(AVLTree& obj);
+	AVLTree(AVLTree&& obj);
+	AVLTree& operator=(AVLTree& obj);
+	AVLTree& operator=(AVLTree&& obj);
 	~AVLTree();
 	void run(std::function<void(std::pair<K, I>)> func);
 	void insert(const K& key, const I& value);
@@ -151,26 +155,30 @@ AVLTree<K, I>::AVLTree()
 template<class K, class I>
 AVLTree<K, I>::~AVLTree()
 {
-	std::list<K> history;
+	std::queue<K> history;
 	run([&history](std::pair<K,I> p)->void {
-		history.push_back(p.first);
+		history.push(p.first);
 		});
-	for (auto& el : history)
-		erase(el);
+	while (!history.empty()) {
+		erase(history.front());
+		history.pop();
+	}
 }
 
 template<class K, class I>
 void AVLTree<K, I>::run(std::function<void(std::pair<K, I>)> func) {
-	std::list<node*> list;
-	list.push_back(this->root);
-	while (!list.empty()) {
-		node* p = list.back();
-		func(std::make_pair(p->key, p->value));
-		list.pop_back();
+	if (!this->root)
+		return;
+	std::queue<node*> q;
+	q.push(this->root);
+	while (!q.empty()) {
+		node* p = q.front();
+		q.pop();
 		if (p->left)
-			list.push_back(p->left);
+			q.push(p->left);
 		if (p->right)
-			list.push_back(p->right);
+			q.push(p->right);
+		func(std::make_pair(p->key, p->value));
 	}
 }
 
@@ -213,10 +221,15 @@ template<class K, class I>
 void AVLTree<K, I>::erase(const K& key)
 {
 	node* x = find(key);
+	if (x == this->root & x->height <= 1) {
+		delete x;
+		this->root = nullptr;
+		return;
+	}
 	node* y = x;
 	node* s = nullptr;
-	if(!x)
-		throw std::domain_error("not found");
+	if (!x)
+		return;
 	if (x->left && x->right) {
 		y = succesor(x);
 		x->value = y->value;
@@ -228,6 +241,7 @@ void AVLTree<K, I>::erase(const K& key)
 		s = y->right;
 	if (y->parent == nullptr) {
 		this->root = s;
+		this->root->parent = nullptr;
 	}
 	else{
 		if(s)
@@ -240,4 +254,38 @@ void AVLTree<K, I>::erase(const K& key)
 	node* p = ((s) ? s : y->parent);
 	delete y;
 	fixUp(p);
+}
+
+template<class K, class I>
+AVLTree<K, I>::AVLTree(AVLTree& obj) {
+	obj.run([this](std::pair<K, I> p)->void {
+		this->insert(p.first, p.second);
+		});
+}
+
+template<class K, class I>
+AVLTree<K, I>::AVLTree(AVLTree&& obj) {
+	this->root = obj.root;
+	obj.root = nullptr;
+}
+
+template<class K, class I>
+AVLTree<K, I>& AVLTree<K, I>::operator=(AVLTree& obj) {
+	if (this == &obj)
+		return *this;
+	this->~AVLTree();
+	obj.run([this](std::pair<K, I> p)->void {
+		this->insert(p.first, p.second);
+		});
+	return *this;
+}
+
+template<class K, class I>
+AVLTree<K, I>& AVLTree<K, I>::operator=(AVLTree&& obj) {
+	if (this == &obj)
+		return *this;
+	this->~AVLTree();
+	this->root = obj.root;
+	obj.root = nullptr;
+	return *this;
 }
