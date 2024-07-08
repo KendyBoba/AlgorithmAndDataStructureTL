@@ -154,7 +154,7 @@ namespace algds {
 	bool HashMap<V>::insert(std::unique_ptr<node[]>& map, const std::string& key, const V& value) {
 		uint64 key_num = toNum(key);
 		uint64 h1 = hash(key_num);
-		uint64 h2 = (hash(key_num) * 2 + 1) % cur_size;
+		uint64 h2 = hash(key_num) * 2 + 1;
 		uint64 i = h1;
 		while (map[i].state == State::DELETED || map[i].state == State::FILL) {
 			if (map[i].key == key)
