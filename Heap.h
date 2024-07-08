@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HHEAP
+#define HHEAP
 #include <iostream>
 #include <memory>
 
@@ -24,6 +25,9 @@ namespace algds {
         void resize();
     public:
         Heap();
+        Heap(const Heap& heap);
+        Heap& operator=(const Heap& heap);
+        Heap(Heap&& heap) = delete;
         void push(const K& new_key, const I& new_item);
         I pop();
     };
@@ -31,6 +35,24 @@ namespace algds {
     template<class K, class I>
     Heap<K, I>::Heap() {
         arr = std::make_unique<Node[]>(size);
+    }
+
+    template<class K, class I>
+    Heap<K, I>::Heap(const Heap& heap) {
+        arr = std::make_unique<Node[]>(size);
+        for (size_t i = 0; i < heap.length; ++i) {
+            this->push(heap.arr[i].key, heap.arr[i].item);
+        }
+    }
+
+    template<class K, class I>
+    Heap<K, I>& Heap<K, I>::operator=(const Heap& heap) {
+        if(!arr)
+            arr = std::make_unique<Node[]>(size);
+        for (size_t i = 0; i < heap.length; ++i) {
+            this->push(heap.arr[i].key, heap.arr[i].item);
+        }
+        return *this;
     }
 
     template<class K, class I>
@@ -125,3 +147,4 @@ namespace algds {
         arr = std::move(new_array);
     }
 }
+#endif

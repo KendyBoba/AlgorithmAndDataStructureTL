@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HRB
+#define HRB
 #include <functional>
 #include <list>
 
@@ -326,3 +327,4 @@ namespace algds {
 		}
 	}
 }
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HBIN
+#define HBIN
 #include <functional>
 
 namespace algds {
@@ -159,3 +160,4 @@ namespace algds {
 		delete y;
 	}
 }
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef HAVL
+#define HAVL
+
 #include <functional>
 #include <queue>
 
@@ -293,3 +295,4 @@ namespace algds {
 		return *this;
 	}
 }
+#endif

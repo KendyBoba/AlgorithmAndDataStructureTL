@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HBTREE
+#define HBTREE
 #include <queue>
 #include <functional>
 
@@ -423,3 +424,4 @@ namespace algds {
         this->root = nullptr;
     }
 }
+#endif

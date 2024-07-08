@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HMAP
+#define HMAP
 #include <memory>
 #include <string>
 #include <iostream>
@@ -36,6 +37,9 @@ namespace algds {
 		void reduce();
 	public:
 		HashMap();
+		HashMap(HashMap& map);
+		HashMap& operator=(HashMap& map);
+		HashMap(HashMap&& map) = delete;
 		void insert(std::string key, V value);
 		V find(const std::string& key);
 		void remove(const std::string& key);
@@ -45,6 +49,23 @@ namespace algds {
 	template <class V>
 	HashMap<V>::HashMap() {
 		pmap = std::make_unique<node[]>(cur_size);
+	}
+
+	template <class V>
+	HashMap<V>::HashMap(HashMap& map) {
+		pmap = std::make_unique<node[]>(cur_size);
+		map.run([this](node elem)->void {
+			this->insert(elem.key, elem.value);
+			});
+	}
+	template <class V>
+	HashMap<V>& HashMap<V>::operator=(HashMap& map) {
+		if(!pmap)
+			pmap = std::make_unique<node[]>(cur_size);
+		map.run([this](node elem)->void {
+			this->insert(elem.key, elem.value);
+			});
+		return *this;
 	}
 
 	template <class V>
@@ -155,3 +176,4 @@ namespace algds {
 			fill += 1;
 	}
 }
+#endif

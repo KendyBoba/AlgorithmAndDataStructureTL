@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HSORT
+#define HSORT
 #include <stack>
 #include <random>
 
@@ -207,3 +208,4 @@ namespace algds {
 			fixDown(arr, size, i);
 	}
 }
+#endif

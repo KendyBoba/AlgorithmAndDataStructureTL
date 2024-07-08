@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HOTHER
+#define HOTHER
 #include <vector>
 #include <memory>
 #include <utility>
@@ -100,3 +101,4 @@ namespace algds {
 	}
 
 }
+#endif

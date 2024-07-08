@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HBH
+#define HBH
 #include <vector>
 #include <list>
 
@@ -37,9 +38,9 @@ namespace algds {
 		BinomialHeap();
 		~BinomialHeap();
 		BinomialHeap(const BinomialHeap& heap);
-		BinomialHeap(BinomialHeap&& heap);
+		BinomialHeap(BinomialHeap&& heap)noexcept;
 		BinomialHeap& operator=(const BinomialHeap& heap);
-		BinomialHeap& operator=(BinomialHeap&& heap);
+		BinomialHeap& operator=(BinomialHeap&& heap) noexcept;
 		void Insert(const K& key, const I& item);
 		void Union(const BinomialHeap& heap);
 		std::pair<K, I> getMinMax();
@@ -78,7 +79,7 @@ namespace algds {
 	}
 
 	template<class K, class I, bool (*Comp)(K, K)>
-	BinomialHeap<K, I, Comp>::BinomialHeap(BinomialHeap&& heap) {
+	BinomialHeap<K, I, Comp>::BinomialHeap(BinomialHeap&& heap)noexcept {
 		if (this == &heap)
 			return;
 		this->head = heap.head;
@@ -86,9 +87,10 @@ namespace algds {
 	}
 
 	template<class K, class I, bool (*Comp)(K, K)>
-	BinomialHeap<K, I, Comp>& BinomialHeap<K, I, Comp>::operator=(BinomialHeap&& heap) {
+	BinomialHeap<K, I, Comp>& BinomialHeap<K, I, Comp>::operator=(BinomialHeap&& heap)noexcept {
 		if (this == &heap)
 			return *this;
+		this->~BinomialHeap();
 		this->head = heap.head;
 		heap.head = nullptr;
 		return *this;
@@ -294,3 +296,4 @@ namespace algds {
 	}
 
 }
+#endif
