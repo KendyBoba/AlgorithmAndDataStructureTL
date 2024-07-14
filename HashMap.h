@@ -85,15 +85,14 @@ namespace algds {
 	template <class V>
 	uint64 HashMap<V>::find_elem(const std::string& key) {
 		uint64 key_num = toNum(key);
-		uint64 h1 = hash(key_num);
-		uint64 h2 = (hash(key_num) * 2 + 1) % cur_size;
-		uint64 i = h1;
-		while (pmap[i].key != key) {
-			if (pmap[i].state == State::EMPTY)
+		uint64 h1 = hash(key_num) % cur_size;
+		uint64 h2 = hash(key_num) * 2 + 1;
+		while (pmap[h1].key != key) {
+			if (pmap[h1].state == State::EMPTY)
 				throw std::domain_error("key not found");
-			i = (i + h2) % cur_size;
+			h1 = (h1 + h2) % cur_size;
 		}
-		return i;
+		return h1;
 	}
 
 	template <class V>
@@ -153,15 +152,14 @@ namespace algds {
 	template <class V>
 	bool HashMap<V>::insert(std::unique_ptr<node[]>& map, const std::string& key, const V& value) {
 		uint64 key_num = toNum(key);
-		uint64 h1 = hash(key_num);
+		uint64 h1 = hash(key_num) % cur_size;
 		uint64 h2 = hash(key_num) * 2 + 1;
-		uint64 i = h1;
-		while (map[i].state == State::DELETED || map[i].state == State::FILL) {
-			if (map[i].key == key)
+		while (map[h1].state == State::DELETED || map[h1].state == State::FILL) {
+			if (map[h1].key == key)
 				return false;
-			i = (i + h2) % cur_size;
+			h1 = (h1 + h2) % cur_size;
 		}
-		map[i] = node{ key,value,State::FILL };
+		map[h1] = node{ key,value,State::FILL };
 		return true;
 	}
 
